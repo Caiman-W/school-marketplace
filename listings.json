@@ -43,7 +43,10 @@
   "location": "Berkeley, SC",
   "description": "Opened, like new in box.",
   "photos": [
-    "images/owl-meeting-lab-3-20260108/photo1.webp"
+    ""photos": [
+  "images/chromebook-default.jpg"
+  ]
+"
   ],
   "datePosted": "2026-01-08",
   "status": "Available"
