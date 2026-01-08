@@ -5,7 +5,6 @@
   <title>Template Listing</title>
   <meta name="viewport" content="width=device-width,initial-scale=1" />
   <link rel="stylesheet" href="styles.css" />
-  <!-- JSZip for creating a ZIP in the browser -->
   <script src="https://cdnjs.cloudflare.com/ajax/libs/jszip/3.10.1/jszip.min.js"></script>
 </head>
 <body>
@@ -91,37 +90,18 @@
     <div class="control-row">
       <div class="control" style="flex:2; min-width:260px;">
         <label>Description</label>
-        <textarea id="description" rows="5"
-          placeholder="Condition details, accessories, pickup notes…"></textarea>
+        <textarea id="description" rows="5" placeholder="Condition details, accessories, pickup notes…"></textarea>
       </div>
     </div>
 
     <hr class="soft-hr">
 
     <div class="control-row">
-      <div class="control" style="flex:2; min-width:260px;">
-        <label>Images (drag & drop)</label>
-        <div id="dropzone" class="dropzone" tabindex="0" role="button" aria-label="Drop images here">
-          <div class="dropzone-top">
-            <div>
-              <b>Drop images here</b>
-              <div class="muted small">Auto-converts to .webp and resizes (max width 1400px).</div>
-            </div>
-            <button id="pickFiles" class="btn btn-secondary" type="button">Choose files</button>
-          </div>
-          <input id="fileInput" type="file" accept="image/*" multiple hidden />
-          <div id="thumbs" class="thumbs"></div>
-        </div>
-        <div class="muted small" id="imgStatus" style="margin-top:10px;"></div>
-      </div>
-    </div>
-
-    <div class="control-row">
       <div class="control">
         <label>Image settings</label>
         <div class="range-row">
           <div class="range-item">
-            <span class="muted small">Max width</span>
+            <span class="muted small">Max width (px)</span>
             <input id="maxWidth" type="number" min="600" step="100" value="1400" />
           </div>
           <div class="range-item">
@@ -141,6 +121,27 @@
     </div>
 
     <div class="control-row">
+      <div class="control" style="flex:2; min-width:260px;">
+        <label>Images</label>
+        <div id="dropzone" class="dropzone" tabindex="0">
+          <div class="dropzone-top">
+            <div>
+              <b>Drag & drop images here</b>
+              <div class="muted small">Auto converts on drop (up to 6 images).</div>
+            </div>
+            <button id="pickFiles" class="btn btn-secondary" type="button">Choose files</button>
+          </div>
+
+          <input id="fileInput" type="file" accept="image/*" multiple hidden />
+
+          <div id="thumbs" class="thumbs"></div>
+        </div>
+
+        <div id="imgStatus" class="muted small" style="margin-top:10px;"></div>
+      </div>
+    </div>
+
+    <div class="control-row">
       <button id="generate" class="btn" type="button">Generate JSON</button>
       <button id="copy" class="btn btn-secondary" type="button">Copy JSON</button>
       <button id="downloadZip" class="btn btn-secondary" type="button">Download ZIP (images + json)</button>
@@ -148,11 +149,8 @@
   </section>
 
   <section class="card" style="margin-top:14px;">
-    <h2 style="margin:0 0 10px;">JSON Output (paste into <code>listings.json</code>)</h2>
-    <pre id="output"
-      style="white-space:pre-wrap;overflow:auto;margin:0;
-             background:#ffffff;border:1px solid var(--border);
-             border-radius:12px;padding:12px;"></pre>
+    <h2 style="margin:0 0 10px;">JSON Output</h2>
+    <pre id="output"></pre>
   </section>
 
 </main>
