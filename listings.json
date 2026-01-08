@@ -1,1 +1,20 @@
+[
+  {
+    "id": "sample-chromebooks-001",
+    "title": "Dell Chromebook 3100 (Lot of 30)",
+    "category": "Chromebooks",
+    "qty": 30,
+    "condition": "Used",
+    "price": 35,
+    "priceNote": "each (OBO)",
+    "location": "Columbia, SC",
+    "description": "Student-used Dell 3100 Chromebooks. Normal wear. Ideal for parts or refresh. Includes chargers for 22 units.",
+    "photos": [
+      "images/sample/chromebook1.jpg",
+      "images/sample/chromebook2.jpg"
+    ],
+    "datePosted": "2026-01-08",
+    "status": "Available"
+  }
+]
 
