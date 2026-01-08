@@ -10,12 +10,25 @@ const els = {
   location: document.getElementById("location"),
   datePosted: document.getElementById("datePosted"),
   description: document.getElementById("description"),
-  photos: document.getElementById("photos"),
+
+  dropzone: document.getElementById("dropzone"),
+  pickFiles: document.getElementById("pickFiles"),
+  fileInput: document.getElementById("fileInput"),
+  thumbs: document.getElementById("thumbs"),
+  imgStatus: document.getElementById("imgStatus"),
+
+  maxWidth: document.getElementById("maxWidth"),
+  quality: document.getElementById("quality"),
+  format: document.getElementById("format"),
+
   generate: document.getElementById("generate"),
   copy: document.getElementById("copy"),
-  download: document.getElementById("download"),
+  downloadZip: document.getElementById("downloadZip"),
   output: document.getElementById("output")
 };
+
+// Holds converted image blobs and their intended repo paths
+let converted = []; // [{ path, blob, previewUrl, originalName, bytes }]
 
 function todayISO() {
   const d = new Date();
@@ -41,30 +54,11 @@ function refreshId() {
   els.id.value = `${base}-${date}`;
 }
 
-function parsePhotoLines() {
-  return String(els.photos.value || "")
-    .split("\n")
-    .map(s => s.trim())
-    .filter(Boolean)
-    .slice(0, 6);
-}
-
-function buildObj() {
-  refreshId();
-  return {
-    id: els.id.value,
-    title: els.title.value.trim(),
-    category: els.category.value.trim(),
-    qty: Number(els.qty.value || 0),
-    condition: els.condition.value,
-    price: Number(els.price.value || 0),
-    priceNote: els.priceNote.value.trim(),
-    location: els.location.value.trim(),
-    description: els.description.value.trim(),
-    photos: parsePhotoLines(),
-    datePosted: els.datePosted.value || todayISO(),
-    status: els.status.value
-  };
+function extForMime(mime) {
+  if (mime === "image/webp") return "webp";
+  if (mime === "image/jpeg") return "jpg";
+  if (mime === "image/png") return "png";
+  return "bin";
 }
 
 function clean(obj) {
@@ -76,8 +70,30 @@ function clean(obj) {
   return out;
 }
 
-function generate() {
-  const obj = clean(buildObj());
+function buildListingObject() {
+  refreshId();
+  const id = els.id.value;
+
+  const photos = converted.map(x => x.path);
+
+  return clean({
+    id,
+    title: els.title.value.trim(),
+    category: els.category.value.trim(),
+    qty: Number(els.qty.value || 0),
+    condition: els.condition.value,
+    price: Number(els.price.value || 0),
+    priceNote: els.priceNote.value.trim(),
+    location: els.location.value.trim(),
+    description: els.description.value.trim(),
+    photos,
+    datePosted: els.datePosted.value || todayISO(),
+    status: els.status.value
+  });
+}
+
+function generateJSON() {
+  const obj = buildListingObject();
   els.output.textContent = JSON.stringify(obj, null, 2);
 }
 
@@ -91,42 +107,22 @@ async function copyJSON() {
   } catch {}
 }
 
-function downloadJSON() {
-  const txt = els.output.textContent.trim();
-  if (!txt) return;
-  const blob = new Blob([txt], { type: "application/json" });
-  const a = document.createElement("a");
-  a.href = URL.createObjectURL(blob);
-  a.download = `${els.id.value || "listing"}.json`;
-  document.body.appendChild(a);
-  a.click();
-  a.remove();
-  setTimeout(() => URL.revokeObjectURL(a.href), 1500);
+function setImgStatus(msg) {
+  els.imgStatus.textContent = msg;
 }
 
-function init() {
-  els.datePosted.value = todayISO();
-  refreshId();
-  generate();
-
-  els.title.addEventListener("input", () => { refreshId(); generate(); });
-  els.datePosted.addEventListener("change", () => { refreshId(); generate(); });
-
-  ["input","change"].forEach(evt => {
-    els.category.addEventListener(evt, generate);
-    els.qty.addEventListener(evt, generate);
-    els.condition.addEventListener(evt, generate);
-    els.status.addEventListener(evt, generate);
-    els.price.addEventListener(evt, generate);
-    els.priceNote.addEventListener(evt, generate);
-    els.location.addEventListener(evt, generate);
-    els.description.addEventListener(evt, generate);
-    els.photos.addEventListener(evt, generate);
+function clearThumbs() {
+  els.thumbs.innerHTML = "";
+  converted.forEach(c => {
+    if (c.previewUrl) URL.revokeObjectURL(c.previewUrl);
   });
-
-  els.generate.addEventListener("click", generate);
-  els.copy.addEventListener("click", copyJSON);
-  els.download.addEventListener("click", downloadJSON);
+  converted = [];
+  setImgStatus("");
 }
 
-init();
+function addThumb(previewUrl, label) {
+  const div = document.createElement("div");
+  div.className = "thumbCard";
+  div.innerHTML = `
+    <img src="${previewUrl}" alt="">
+    <div
