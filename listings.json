@@ -31,5 +31,21 @@
     ],
     "datePosted": "2026-01-08",
     "status": "Available"
-  }
+  },
+  {
+  "id": "owl-meeting-lab-3-20260108",
+  "title": "Owl Meeting Lab 3",
+  "category": "Camera",
+  "qty": 2,
+  "condition": "Used",
+  "price": 500,
+  "priceNote": "Each",
+  "location": "Berkeley, SC",
+  "description": "Opened, like new in box.",
+  "photos": [
+    "images/owl-meeting-lab-3-20260108/photo1.webp"
+  ],
+  "datePosted": "2026-01-08",
+  "status": "Available"
+}
 ]
