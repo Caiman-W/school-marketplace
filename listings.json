@@ -15,6 +15,21 @@
     ],
     "datePosted": "2026-01-08",
     "status": "Available"
-  }
+  }{
+  "id": "chromebook-test-20260108",
+  "title": "Chromebook Test",
+  "category": "Laptop",
+  "qty": 500,
+  "condition": "Used",
+  "price": 250,
+  "priceNote": "Each",
+  "location": "Columbia, SC",
+  "description": "Unopened Chromebooks bought in excess",
+  "photos": [
+    "images/chromebook-test-20260108/photo1.png"
+  ],
+  "datePosted": "2026-01-08",
+  "status": "Available"
+}
 ]
 
