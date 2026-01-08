@@ -8,23 +8,21 @@
 </head>
 <body>
 
-<main class="container">
-  <h1>Admin</h1>
-
-  <div class="card">
-    <label>Title</label><input id="title">
-    <label>Category</label><input id="category">
-    <label>Quantity</label><input id="qty" type="number">
-    <label>Condition</label><input id="condition">
-    <label>Price</label><input id="price" type="number">
-    <label>Location</label><input id="location">
-    <label>Description</label><textarea id="desc"></textarea>
-    <button class="btn" onclick="generate()">Generate JSON</button>
+<header class="container header">
+  <div>
+    <h1>Admin</h1>
+    <p class="muted">Hidden access page.</p>
   </div>
+  <div class="header-actions">
+    <a class="btn btn-secondary" href="index.html">Back</a>
+  </div>
+</header>
 
-  <pre id="out" class="card"></pre>
+<main class="container">
+  <section class="card">
+    <p class="muted">This page is intentionally minimal.</p>
+  </section>
 </main>
 
-<script src="admin.js"></script>
 </body>
 </html>
