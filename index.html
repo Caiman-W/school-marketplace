@@ -13,11 +13,9 @@
     <h1>School Equipment Marketplace</h1>
     <p class="muted">Internal listings for surplus and available school equipment.</p>
   </div>
+
   <div class="header-actions">
-    <a class="btn btn-secondary"
-       href="https://github.com/caiman-w/school-marketplace"
-       target="_blank"
-       rel="noreferrer">Repo</a>
+    <button id="templateBtn" class="btn btn-secondary" type="button">Template listing</button>
   </div>
 </header>
 
@@ -25,7 +23,7 @@
 
   <section class="controls card">
     <div class="control-row">
-      <div class="control" style="flex:2;">
+      <div class="control" style="flex:2; min-width:240px;">
         <label>Search</label>
         <input id="q" type="search" placeholder="Search listings…" />
       </div>
@@ -56,23 +54,25 @@
     </div>
 
     <div class="control-row">
-      <button id="reset" class="btn btn-secondary">Reset</button>
+      <button id="reset" class="btn btn-secondary" type="button">Reset</button>
       <div class="muted" id="count"></div>
     </div>
   </section>
 
-  <section id="grid" class="grid"></section>
+  <section id="grid" class="grid">
+    <!-- app.js will populate -->
+  </section>
 
 </main>
 
 <!-- Hidden Admin Link -->
-<a class="stealth-admin" href="admin.html">•</a>
+<a class="stealth-admin" href="admin.html" aria-label="Admin">•</a>
 
 <dialog id="modal" class="modal">
   <div class="modal-card">
     <div class="modal-top">
       <h2 id="modalTitle"></h2>
-      <button id="closeModal" class="icon-btn">✕</button>
+      <button id="closeModal" class="icon-btn" aria-label="Close">✕</button>
     </div>
     <div id="modalBody"></div>
   </div>
