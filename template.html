@@ -1,0 +1,127 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8" />
+  <title>Template Listing</title>
+  <meta name="viewport" content="width=device-width,initial-scale=1" />
+  <link rel="stylesheet" href="styles.css" />
+</head>
+<body>
+
+<header class="container header">
+  <div>
+    <h1>Template Listing</h1>
+    <p class="muted">Fill this out to generate the JSON for <code>listings.json</code>.</p>
+  </div>
+  <div class="header-actions">
+    <a class="btn btn-secondary" href="index.html">Back</a>
+  </div>
+</header>
+
+<main class="container">
+
+  <section class="card">
+    <div class="control-row">
+      <div class="control" style="flex:2;">
+        <label>Title</label>
+        <input id="title" placeholder="Dell Chromebook 3100 (Lot of 30)" />
+      </div>
+
+      <div class="control">
+        <label>ID (auto-generated)</label>
+        <input id="id" readonly />
+      </div>
+    </div>
+
+    <div class="control-row">
+      <div class="control">
+        <label>Category</label>
+        <input id="category" placeholder="Chromebooks, Switches, APs" />
+      </div>
+
+      <div class="control">
+        <label>Quantity</label>
+        <input id="qty" type="number" min="0" value="0" />
+      </div>
+
+      <div class="control">
+        <label>Condition</label>
+        <select id="condition">
+          <option>Used</option>
+          <option>New</option>
+          <option>Fair</option>
+          <option>Parts</option>
+        </select>
+      </div>
+
+      <div class="control">
+        <label>Status</label>
+        <select id="status">
+          <option>Available</option>
+          <option>Pending</option>
+          <option>Sold</option>
+        </select>
+      </div>
+    </div>
+
+    <div class="control-row">
+      <div class="control">
+        <label>Price</label>
+        <input id="price" type="number" min="0" value="0" />
+      </div>
+
+      <div class="control">
+        <label>Price note</label>
+        <input id="priceNote" placeholder="each (OBO), total, includes chargers" />
+      </div>
+
+      <div class="control">
+        <label>Location</label>
+        <input id="location" placeholder="Columbia, SC" />
+      </div>
+
+      <div class="control">
+        <label>Date posted</label>
+        <input id="datePosted" type="date" />
+      </div>
+    </div>
+
+    <div class="control-row">
+      <div class="control" style="flex:2; min-width:260px;">
+        <label>Description</label>
+        <textarea id="description" rows="5"
+          placeholder="Condition details, accessories, pickup notes…"></textarea>
+      </div>
+    </div>
+
+    <div class="control-row">
+      <div class="control" style="flex:2; min-width:260px;">
+        <label>Photo paths (optional, one per line)</label>
+        <textarea id="photos" rows="4"
+          placeholder="images/my-id/photo1.jpg&#10;images/my-id/photo2.jpg"></textarea>
+        <p class="muted" style="margin-top:8px;">
+          Tip: Upload photos to <code>images/&lt;id&gt;/</code>
+        </p>
+      </div>
+    </div>
+
+    <div class="control-row">
+      <button id="generate" class="btn" type="button">Generate JSON</button>
+      <button id="copy" class="btn btn-secondary" type="button">Copy JSON</button>
+      <button id="download" class="btn btn-secondary" type="button">Download .json</button>
+    </div>
+  </section>
+
+  <section class="card" style="margin-top:14px;">
+    <h2 style="margin:0 0 10px;">JSON Output</h2>
+    <pre id="output"
+      style="white-space:pre-wrap;overflow:auto;margin:0;
+             background:#0e1216;border:1px solid var(--border);
+             border-radius:12px;padding:12px;"></pre>
+  </section>
+
+</main>
+
+<script src="template.js"></script>
+</body>
+</html>
