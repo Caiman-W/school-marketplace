@@ -11,8 +11,7 @@ const els = {
   modal: document.getElementById("modal"),
   modalTitle: document.getElementById("modalTitle"),
   modalBody: document.getElementById("modalBody"),
-  closeModal: document.getElementById("closeModal"),
-  templateBtn: document.getElementById("templateBtn")
+  closeModal: document.getElementById("closeModal")
 };
 
 let listings = [];
@@ -29,15 +28,7 @@ function money(n) {
   return "$" + num.toLocaleString("en-US");
 }
 
-function todayISO() {
-  const d = new Date();
-  const yyyy = d.getFullYear();
-  const mm = String(d.getMonth() + 1).padStart(2, "0");
-  const dd = String(d.getDate()).padStart(2, "0");
-  return `${yyyy}-${mm}-${dd}`;
-}
-
-function showMessageCard(title, message) {
+function showCard(title, message) {
   els.grid.innerHTML = `
     <div class="card">
       <b>${escapeHtml(title)}</b><br><br>
@@ -107,7 +98,7 @@ function render() {
   els.count.textContent = `${data.length} listing${data.length === 1 ? "" : "s"}`;
 
   if (data.length === 0) {
-    showMessageCard("No listings found", "Try clearing search or changing filters.");
+    showCard("No listings found", "Try clearing search or changing filters.");
     return;
   }
 
@@ -117,8 +108,7 @@ function render() {
       : "";
 
     const price = (l.price === 0) ? "Free" : money(l.price);
-    const note = l.priceNote ? ` <span class="muted" style="font-size:12px;">${escapeHtml(l.priceNote)}</span>` : "";
-
+    const note = l.priceNote ? ` <span class="muted small">(${escapeHtml(l.priceNote)})</span>` : "";
     const desc = (l.description || "").trim();
     const snippet = desc.length > 140 ? desc.slice(0, 140) + "…" : desc;
 
@@ -189,43 +179,6 @@ function openModal(id) {
   els.modal.showModal();
 }
 
-function generateTemplateListing() {
-  const date = todayISO();
-  const template = {
-    id: `new-listing-${date.replaceAll("-", "")}`,
-    title: "REPLACE ME (e.g., Dell Chromebook 3100 - Lot of 30)",
-    category: "Chromebooks",
-    qty: 0,
-    condition: "Used",
-    price: 0,
-    priceNote: "each (OBO)",
-    location: "Columbia, SC",
-    description: "Add a clear description here.",
-    photos: [
-      "images/REPLACE-ID/photo1.jpg"
-    ],
-    datePosted: date,
-    status: "Available"
-  };
-
-  const json = JSON.stringify(template, null, 2);
-
-  // Copy to clipboard
-  if (navigator.clipboard?.writeText) {
-    navigator.clipboard.writeText(json).catch(() => {});
-  }
-
-  // Download as file
-  const blob = new Blob([json], { type: "application/json" });
-  const a = document.createElement("a");
-  a.href = URL.createObjectURL(blob);
-  a.download = `listing-template-${date}.json`;
-  document.body.appendChild(a);
-  a.click();
-  a.remove();
-  setTimeout(() => URL.revokeObjectURL(a.href), 1500);
-}
-
 function wireEvents() {
   els.closeModal.addEventListener("click", () => els.modal.close());
   els.modal.addEventListener("click", (e) => { if (e.target === els.modal) els.modal.close(); });
@@ -242,14 +195,11 @@ function wireEvents() {
     els.sort.value = "newest";
     render();
   });
-
-  els.templateBtn.addEventListener("click", generateTemplateListing);
 }
 
 async function loadListings() {
-  // shows something even if fetch fails
   els.count.textContent = "Loading…";
-  showMessageCard("Loading listings…", "One moment.");
+  showCard("Loading listings…", "One moment.");
 
   try {
     const res = await fetch("listings.json", { cache: "no-store" });
@@ -263,10 +213,7 @@ async function loadListings() {
   } catch (err) {
     console.error(err);
     els.count.textContent = "";
-    showMessageCard(
-      "Listings failed to load",
-      `${err.message}\n\nOpen listings.json directly to confirm it is valid JSON and in the repo root.`
-    );
+    showCard("Listings failed to load", err.message);
   }
 }
 
