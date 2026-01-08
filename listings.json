@@ -10,8 +10,7 @@
     "location": "Columbia, SC",
     "description": "Student-used Dell 3100 Chromebooks. Normal wear. Ideal for parts or refresh. Includes chargers for 22 units.",
     "photos": [
-      "images/sample/chromebook1.jpg",
-      "images/sample/chromebook2.jpg"
+      "images/chromebook-default.jpg"
     ],
     "datePosted": "2026-01-08",
     "status": "Available"
@@ -27,25 +26,25 @@
     "location": "Columbia, SC",
     "description": "Unopened Chromebooks bought in excess",
     "photos": [
-      "images/chromebook-test-20260108/photo1.png"
+      "images/chromebook-default.jpg"
     ],
     "datePosted": "2026-01-08",
     "status": "Available"
   },
   {
-  "id": "owl-meeting-lab-3-20260108",
-  "title": "Owl Meeting Lab 3",
-  "category": "Camera",
-  "qty": 2,
-  "condition": "Used",
-  "price": 500,
-  "priceNote": "Each",
-  "location": "Berkeley, SC",
-  "description": "Opened, like new in box.",
-  "photos": [
-    ""photos": ["images/chromebook-default.jpg"]""
-  ],
-  "datePosted": "2026-01-08",
-  "status": "Available"
-}
+    "id": "owl-meeting-lab-3-20260108",
+    "title": "Owl Meeting Lab 3",
+    "category": "Camera",
+    "qty": 2,
+    "condition": "Used",
+    "price": 500,
+    "priceNote": "Each",
+    "location": "Berkeley, SC",
+    "description": "Opened, like new in box.",
+    "photos": [
+      "images/chromebook-default.jpg"
+    ],
+    "datePosted": "2026-01-08",
+    "status": "Available"
+  }
 ]
