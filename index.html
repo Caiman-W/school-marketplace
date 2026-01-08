@@ -1,1 +1,114 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width,initial-scale=1" />
+  <title>School Equipment Marketplace</title>
+  <link rel="stylesheet" href="styles.css" />
+</head>
+<body>
+  <header class="container header">
+    <div>
+      <h1>School Equipment Marketplace</h1>
+      <p class="muted">Internal listings for schools selling or transferring equipment.</p>
+    </div>
+    <div class="header-actions">
+      <a class="btn btn-secondary" href="admin.html">Admin</a>
+      <a class="btn btn-secondary" href="https://github.com/" target="_blank" rel="noreferrer">Repo</a>
+    </div>
+  </header>
+
+  <main class="container">
+    <section class="controls card">
+      <div class="control-row">
+        <div class="control">
+          <label for="q">Search</label>
+          <input id="q" type="search" placeholder="e.g., Chromebook, Meraki, projector, Dell…" />
+        </div>
+
+        <div class="control">
+          <label for="sort">Sort</label>
+          <select id="sort">
+            <option value="newest">Newest</option>
+            <option value="price_asc">Price: Low → High</option>
+            <option value="price_desc">Price: High → Low</option>
+            <option value="qty_desc">Quantity: High → Low</option>
+          </select>
+        </div>
+
+        <div class="control">
+          <label for="status">Status</label>
+          <select id="status">
+            <option value="">All</option>
+            <option value="Available">Available</option>
+            <option value="Pending">Pending</option>
+            <option value="Sold">Sold</option>
+          </select>
+        </div>
+      </div>
+
+      <div class="control-row">
+        <div class="control">
+          <label for="category">Category</label>
+          <select id="category">
+            <option value="">All</option>
+          </select>
+        </div>
+
+        <div class="control">
+          <label for="location">Location</label>
+          <select id="location">
+            <option value="">All</option>
+          </select>
+        </div>
+
+        <div class="control">
+          <label for="condition">Condition</label>
+          <select id="condition">
+            <option value="">All</option>
+            <option value="New">New</option>
+            <option value="Used">Used</option>
+            <option value="Fair">Fair</option>
+            <option value="Parts">Parts</option>
+          </select>
+        </div>
+
+        <div class="control">
+          <label>Price range</label>
+          <div class="range">
+            <input id="minPrice" type="number" min="0" step="1" placeholder="Min" />
+            <span class="muted">to</span>
+            <input id="maxPrice" type="number" min="0" step="1" placeholder="Max" />
+          </div>
+        </div>
+      </div>
+
+      <div class="control-row">
+        <button id="reset" class="btn btn-secondary" type="button">Reset filters</button>
+        <div class="muted" id="count"></div>
+      </div>
+    </section>
+
+    <section id="grid" class="grid" aria-live="polite"></section>
+
+    <section class="footer-note muted">
+      <p>
+        Note: To remove a sold item, delete it from <code>listings.json</code> (or set Status to Sold temporarily).
+      </p>
+    </section>
+  </main>
+
+  <dialog id="modal" class="modal">
+    <div class="modal-card">
+      <div class="modal-top">
+        <h2 id="modalTitle"></h2>
+        <button class="icon-btn" id="closeModal" aria-label="Close">✕</button>
+      </div>
+      <div id="modalBody"></div>
+    </div>
+  </dialog>
+
+  <script src="app.js"></script>
+</body>
+</html>
 
