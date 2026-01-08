@@ -10,7 +10,7 @@
     "location": "Columbia, SC",
     "description": "Student-used Dell 3100 Chromebooks. Normal wear. Ideal for parts or refresh. Includes chargers for 22 units.",
     "photos": [
-      "images/chromebook-default.jpg"
+      "https://techerator.com/wp-content/uploads/2011/10/featured.jpg"
     ],
     "datePosted": "2026-01-08",
     "status": "Available"
@@ -24,9 +24,9 @@
     "price": 250,
     "priceNote": "Each",
     "location": "Columbia, SC",
-    "description": "Unopened Chromebooks bought in excess",
+    "description": "Unopened Chromebooks bought in excess.",
     "photos": [
-      "images/chromebook-default.jpg"
+      "https://techerator.com/wp-content/uploads/2011/10/featured.jpg"
     ],
     "datePosted": "2026-01-08",
     "status": "Available"
@@ -42,7 +42,7 @@
     "location": "Berkeley, SC",
     "description": "Opened, like new in box.",
     "photos": [
-      "images/chromebook-default.jpg"
+      "https://techerator.com/wp-content/uploads/2011/10/featured.jpg"
     ],
     "datePosted": "2026-01-08",
     "status": "Available"
