@@ -11,18 +11,15 @@ const els = {
   modal: document.getElementById("modal"),
   modalTitle: document.getElementById("modalTitle"),
   modalBody: document.getElementById("modalBody"),
-  closeModal: document.getElementById("closeModal")
+  closeModal: document.getElementById("closeModal"),
+  templateBtn: document.getElementById("templateBtn")
 };
 
 let listings = [];
 
 function escapeHtml(str) {
   return String(str ?? "").replace(/[&<>"']/g, (m) => ({
-    "&": "&amp;",
-    "<": "&lt;",
-    ">": "&gt;",
-    "\"": "&quot;",
-    "'": "&#39;"
+    "&": "&amp;", "<": "&lt;", ">": "&gt;", "\"": "&quot;", "'": "&#39;"
   }[m]));
 }
 
@@ -32,55 +29,27 @@ function money(n) {
   return "$" + num.toLocaleString("en-US");
 }
 
-function showError(message) {
-  els.count.textContent = "";
-  els.grid.innerHTML = `
-    <div class="card">
-      <b>Listings failed to load.</b><br><br>
-      <div class="muted">${escapeHtml(message)}</div><br>
-      <div class="muted">
-        Check that <code>listings.json</code> is valid JSON and available at:<br>
-        <code>${escapeHtml(new URL("listings.json", window.location.href).toString())}</code>
-      </div>
-    </div>
-  `;
+function todayISO() {
+  const d = new Date();
+  const yyyy = d.getFullYear();
+  const mm = String(d.getMonth() + 1).padStart(2, "0");
+  const dd = String(d.getDate()).padStart(2, "0");
+  return `${yyyy}-${mm}-${dd}`;
 }
 
-fetch("listings.json", { cache: "no-store" })
-  .then((r) => {
-    if (!r.ok) throw new Error(`Could not load listings.json (HTTP ${r.status})`);
-    return r.json();
-  })
-  .then((data) => {
-    if (!Array.isArray(data)) {
-      throw new Error("listings.json must be a JSON array: [ { ... }, { ... } ]");
-    }
-    listings = data;
-    populateFilters();
-    render();
-  })
-  .catch((err) => {
-    console.error(err);
-    showError(err.message || "Unknown error");
-  });
-
-function populateFilters() {
-  const cats = [...new Set(listings.map(l => l.category).filter(Boolean))].sort();
-  const locs = [...new Set(listings.map(l => l.location).filter(Boolean))].sort();
-
-  els.category.innerHTML =
-    `<option value="">All</option>` +
-    cats.map(c => `<option value="${escapeHtml(c)}">${escapeHtml(c)}</option>`).join("");
-
-  els.location.innerHTML =
-    `<option value="">All</option>` +
-    locs.map(l => `<option value="${escapeHtml(l)}">${escapeHtml(l)}</option>`).join("");
+function showMessageCard(title, message) {
+  els.grid.innerHTML = `
+    <div class="card">
+      <b>${escapeHtml(title)}</b><br><br>
+      <div class="muted">${escapeHtml(message)}</div>
+    </div>
+  `;
 }
 
 function buildMailto(listing) {
   const subject = `Listing inquiry: ${listing.title || listing.id || "Equipment"}`;
   const lines = [
-    `I’m interested in this listing:`,
+    "I’m interested in this listing:",
     `Title: ${listing.title || ""}`,
     `ID: ${listing.id || ""}`,
     `Category: ${listing.category || ""}`,
@@ -88,13 +57,26 @@ function buildMailto(listing) {
     `Condition: ${listing.condition || ""}`,
     `Price: ${listing.price === 0 ? "Free" : money(listing.price)} ${listing.priceNote || ""}`.trim(),
     `Location: ${listing.location || ""}`,
-    ``,
-    `My message:`
+    "",
+    "My message:"
   ];
   return `mailto:${encodeURIComponent(CONTACT_EMAIL)}?subject=${encodeURIComponent(subject)}&body=${encodeURIComponent(lines.join("\n"))}`;
 }
 
-function render() {
+function populateFilters() {
+  const cats = [...new Set(listings.map(l => l.category).filter(Boolean))].sort();
+  const locs = [...new Set(listings.map(l => l.location).filter(Boolean))].sort();
+
+  els.category.innerHTML = `<option value="">All</option>` + cats.map(c =>
+    `<option value="${escapeHtml(c)}">${escapeHtml(c)}</option>`
+  ).join("");
+
+  els.location.innerHTML = `<option value="">All</option>` + locs.map(l =>
+    `<option value="${escapeHtml(l)}">${escapeHtml(l)}</option>`
+  ).join("");
+}
+
+function getFiltered() {
   let data = [...listings];
 
   const q = (els.q.value || "").toLowerCase().trim();
@@ -108,35 +90,48 @@ function render() {
   if (els.category.value) data = data.filter(l => (l.category || "") === els.category.value);
   if (els.location.value) data = data.filter(l => (l.location || "") === els.location.value);
 
+  const sort = els.sort.value;
   data.sort((a, b) => {
-    if (els.sort.value === "newest") return String(b.datePosted || "").localeCompare(String(a.datePosted || ""));
-    if (els.sort.value === "price_asc") return Number(a.price ?? 0) - Number(b.price ?? 0);
-    if (els.sort.value === "price_desc") return Number(b.price ?? 0) - Number(a.price ?? 0);
-    if (els.sort.value === "qty_desc") return Number(b.qty ?? 0) - Number(a.qty ?? 0);
+    if (sort === "newest") return String(b.datePosted || "").localeCompare(String(a.datePosted || ""));
+    if (sort === "price_asc") return Number(a.price ?? 0) - Number(b.price ?? 0);
+    if (sort === "price_desc") return Number(b.price ?? 0) - Number(a.price ?? 0);
+    if (sort === "qty_desc") return Number(b.qty ?? 0) - Number(a.qty ?? 0);
     return 0;
   });
 
+  return data;
+}
+
+function render() {
+  const data = getFiltered();
   els.count.textContent = `${data.length} listing${data.length === 1 ? "" : "s"}`;
 
   if (data.length === 0) {
-    els.grid.innerHTML = `<div class="card">No listings match your filters.</div>`;
+    showMessageCard("No listings found", "Try clearing search or changing filters.");
     return;
   }
 
   els.grid.innerHTML = data.map(l => {
-    const img = l.photos && l.photos[0] ? `<img src="${escapeHtml(l.photos[0])}" alt="${escapeHtml(l.title || "")}">` : "";
+    const img = (l.photos && l.photos[0])
+      ? `<img src="${escapeHtml(l.photos[0])}" alt="${escapeHtml(l.title || "")}">`
+      : "";
+
     const price = (l.price === 0) ? "Free" : money(l.price);
     const note = l.priceNote ? ` <span class="muted" style="font-size:12px;">${escapeHtml(l.priceNote)}</span>` : "";
+
+    const desc = (l.description || "").trim();
+    const snippet = desc.length > 140 ? desc.slice(0, 140) + "…" : desc;
 
     return `
       <div class="card item">
         <div class="thumb">${img}</div>
         <div class="body">
           <strong>${escapeHtml(l.title || "")}</strong>
-          <div class="muted">${escapeHtml(l.location || "")} • ${escapeHtml(l.condition || "")}</div>
+          <div class="meta">${escapeHtml(l.location || "")} • ${escapeHtml(l.condition || "")} • Qty ${escapeHtml(l.qty ?? "")}</div>
           <div class="price">${escapeHtml(price)}${note}</div>
+          <div class="desc-box">${escapeHtml(snippet || "No description provided.")}</div>
           <div class="actions">
-            <button class="btn-secondary btn" data-id="${escapeHtml(l.id)}">View</button>
+            <button class="btn btn-secondary" data-id="${escapeHtml(l.id)}" type="button">View</button>
             <a class="btn" href="${buildMailto(l)}">Contact</a>
           </div>
         </div>
@@ -144,7 +139,6 @@ function render() {
     `;
   }).join("");
 
-  // safer than inline onclick
   els.grid.querySelectorAll("button[data-id]").forEach(btn => {
     btn.addEventListener("click", () => openModal(btn.getAttribute("data-id")));
   });
@@ -156,23 +150,125 @@ function openModal(id) {
 
   els.modalTitle.textContent = l.title || "";
 
+  const photos = (l.photos || []).slice(0, 6);
+  const gallery = photos.length
+    ? `<div class="gallery">${photos.map(p => `<img src="${escapeHtml(p)}" alt="${escapeHtml(l.title || "")}">`).join("")}</div>`
+    : `<div class="desc-box">No photos provided.</div>`;
+
+  const price = (l.price === 0) ? "Free" : money(l.price);
+
   els.modalBody.innerHTML = `
-    <p><b>Category:</b> ${escapeHtml(l.category || "")}</p>
-    <p><b>Quantity:</b> ${escapeHtml(l.qty ?? "")}</p>
-    <p><b>Condition:</b> ${escapeHtml(l.condition || "")}</p>
-    <p><b>Location:</b> ${escapeHtml(l.location || "")}</p>
-    <p><b>Description:</b><br>${escapeHtml(l.description || "").replace(/\n/g, "<br>")}</p>
+    <div class="modal-body-wrap">
+      <div>${gallery}</div>
+      <div>
+        <div class="desc-box" style="margin-bottom:12px;">
+          <b>Details</b><br>
+          <div style="margin-top:8px; line-height:1.5;">
+            <b>Category:</b> ${escapeHtml(l.category || "")}<br>
+            <b>Quantity:</b> ${escapeHtml(l.qty ?? "")}<br>
+            <b>Condition:</b> ${escapeHtml(l.condition || "")}<br>
+            <b>Location:</b> ${escapeHtml(l.location || "")}<br>
+            <b>Date posted:</b> ${escapeHtml(l.datePosted || "")}<br>
+            <b>Price:</b> ${escapeHtml(price)} ${l.priceNote ? `<span class="muted">(${escapeHtml(l.priceNote)})</span>` : ""}<br>
+            <b>Status:</b> ${escapeHtml(l.status || "")}
+          </div>
+        </div>
+
+        <div class="desc-box">
+          <b>Description</b><br>
+          <div style="margin-top:8px; line-height:1.5;">${escapeHtml(l.description || "").replace(/\n/g, "<br>")}</div>
+        </div>
+
+        <div class="actions" style="margin-top:12px;">
+          <a class="btn" href="${buildMailto(l)}">Contact</a>
+        </div>
+      </div>
+    </div>
   `;
 
   els.modal.showModal();
 }
 
-els.closeModal.onclick = () => els.modal.close();
-els.q.oninput = els.category.onchange = els.location.onchange = els.sort.onchange = render;
-els.reset.onclick = () => {
-  els.q.value = "";
-  els.category.value = "";
-  els.location.value = "";
-  els.sort.value = "newest";
-  render();
-};
+function generateTemplateListing() {
+  const date = todayISO();
+  const template = {
+    id: `new-listing-${date.replaceAll("-", "")}`,
+    title: "REPLACE ME (e.g., Dell Chromebook 3100 - Lot of 30)",
+    category: "Chromebooks",
+    qty: 0,
+    condition: "Used",
+    price: 0,
+    priceNote: "each (OBO)",
+    location: "Columbia, SC",
+    description: "Add a clear description here.",
+    photos: [
+      "images/REPLACE-ID/photo1.jpg"
+    ],
+    datePosted: date,
+    status: "Available"
+  };
+
+  const json = JSON.stringify(template, null, 2);
+
+  // Copy to clipboard
+  if (navigator.clipboard?.writeText) {
+    navigator.clipboard.writeText(json).catch(() => {});
+  }
+
+  // Download as file
+  const blob = new Blob([json], { type: "application/json" });
+  const a = document.createElement("a");
+  a.href = URL.createObjectURL(blob);
+  a.download = `listing-template-${date}.json`;
+  document.body.appendChild(a);
+  a.click();
+  a.remove();
+  setTimeout(() => URL.revokeObjectURL(a.href), 1500);
+}
+
+function wireEvents() {
+  els.closeModal.addEventListener("click", () => els.modal.close());
+  els.modal.addEventListener("click", (e) => { if (e.target === els.modal) els.modal.close(); });
+
+  els.q.addEventListener("input", render);
+  els.category.addEventListener("change", render);
+  els.location.addEventListener("change", render);
+  els.sort.addEventListener("change", render);
+
+  els.reset.addEventListener("click", () => {
+    els.q.value = "";
+    els.category.value = "";
+    els.location.value = "";
+    els.sort.value = "newest";
+    render();
+  });
+
+  els.templateBtn.addEventListener("click", generateTemplateListing);
+}
+
+async function loadListings() {
+  // shows something even if fetch fails
+  els.count.textContent = "Loading…";
+  showMessageCard("Loading listings…", "One moment.");
+
+  try {
+    const res = await fetch("listings.json", { cache: "no-store" });
+    if (!res.ok) throw new Error(`Could not load listings.json (HTTP ${res.status})`);
+    const data = await res.json();
+    if (!Array.isArray(data)) throw new Error("listings.json must be an array: [ { ... }, { ... } ]");
+
+    listings = data;
+    populateFilters();
+    render();
+  } catch (err) {
+    console.error(err);
+    els.count.textContent = "";
+    showMessageCard(
+      "Listings failed to load",
+      `${err.message}\n\nOpen listings.json directly to confirm it is valid JSON and in the repo root.`
+    );
+  }
+}
+
+wireEvents();
+loadListings();
